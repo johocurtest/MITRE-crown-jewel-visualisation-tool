@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>
+            Jumo Crown Jewel Map
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" (onkeyup)="handleKeyPress($event)">
+    <div class="action-bar">
+        <div class="action-btn green" (click)="addRow()">
+            <i class="las la-plus-circle"></i> Add Row
+        </div>
+        <div class="action-btn show" (click)="showAllConnections()">
+            <i class="las la-eye"></i>show all
+        </div>
+        <div class="action-btn hide" (click)="hideConnections()">
+            <i class="la la-eye-slash"></i> hide all
+        </div>
+    </div>
+
+  <div class="row-wrapper" *ngFor="let row of rows; let i=index">
+    <div class="row-name">
+      <input type="text" name="{row.id}" [(ngModel)]="rows[i].name"/>
+    </div>
+
+    <div class="node-container">
+      <div *ngFor="let node of row.nodes; let ii= index" 
+        class="node" 
+        >   
+        <div class="outer-connection" > 
+            <!-- remove -->
+            <div class="bubble remove" (click)="removeNode(row,node)"> - </div>
+            <!-- View connections -->
+            <div class="bubble view" (click)="showConnections(node.id)"> <i class="las la-eye"></i> </div>
+            <div class="bubble move" (click)="moveUpInArray(node,row)"><ion-icon name="chevron-forward-outline"></ion-icon></div>
+            <div class="bubble move" (click)="moveDownInArray(node,row)"><ion-icon name="chevron-back-outline"></ion-icon> </div>
+        </div> 
+       
+       
+        <!-- Shows if we are drawing, connect nodes -->
+        <div class="connect" *ngIf="!drawing" (click)="startDrawing(node)" [ngClass]="connectorState"></div>
+        <div class="recieve" *ngIf="drawing" (click)="endDrawing(node)"> </div>
+        <!-- Editable Name of the node  -->
+        <textarea
+        style="overflow:hidden;
+        resize:none" 
+        name="node.id" 
+        [id]="node.id" 
+        [(ngModel)]="row.nodes[ii].name"></textarea>
+      </div>
+    </div>
+
+    <div class="add-node-btn" (click)="addNode(row)">
+      <i class="las la-plus"></i>
+    </div>
+
+    <div class="footer left">
+        <div>Select Arrow State (with numpad):
+            <ol class="color-selector">
+                <li>Failure
+                    <div class="key fail"></div>
+                </li>
+                <li>Degraded
+                    <div class="key degr"></div>
+                </li>
+                <li>Work around
+                    <div class="key work"></div>
+                </li>
+                <li>Nominal
+                    <div class="key nomi"></div>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="footer right">
+        <div class="color-selector">Shortcut keys:
+            <ul>
+                <li>[A] - show all connections </li>
+                <li>[H] - hide all connections </li>
+                <li>[Q] - cancel an arrow placement </li>
+                <li>[I] - Import file </li>
+                <li>[S] - Save state </li>
+            </ul>
+        </div>
+    </div>
+  </div>
+  <a id="downloadTag" [href]="url" download="JumoCrownMapData.json" hidden>Download</a>
+  <input hidden #uploader type="file" (change)="importFile($event)">
+</ion-content>
+
+
+
+
